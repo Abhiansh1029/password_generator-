@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Password Generator</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      display: flex;
+      min-height: 100vh;
+      background: #f0f0f0;
+    }
+
+    .left {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .left::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: url('metallic-tangled-line-shape-isolated-600nw-2431698605.webp') no-repeat center center;
+      background-size: cover;
+      z-index: 0;
+    }
+
+    .left::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.7); /* dark overlay */
+      z-index: 1;
+    }
+
+    .left h1 {
+      position: relative;
+      z-index: 2;
+      color: white;
+      font-size: 2.5rem;
+    }
+
+    .right {
+      flex: 1;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      border-top-left-radius: 40px;
+      border-bottom-left-radius: 40px;
+      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 1.8rem;
+      color: #111;
+    }
+
+    label {
+      font-size: 0.9rem;
+      color: #444;
+      margin: 0.5rem 0;
+      display: block;
+    }
+
+    input[type="number"],
+    input[type="checkbox"] {
+      width: 100%;
+      padding: 0.6rem;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    .checkbox-group {
+      margin: 1rem 0;
+    }
+
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.8rem;
+      margin-top: 1rem;
+      background: #111;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #333;
+    }
+
+    #password-output {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      background: #f3f4f6;
+      border-radius: 10px;
+      font-size: 1rem;
+      word-break: break-word;
+      text-align: center;
+      color: #111;
+      border: 1px solid #ccc;
+    }
+
+    .note {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #888;
+      margin-top: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+
+      .left,
+      .right {
+        flex: unset;
+        width: 100%;
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="left">
+    <h1>Welcome Back!</h1>
+  </div>
+
+  <div class="right">
+    <div class="container">
+      <h2>Password Generator</h2>
+
+      <label for="length">Password Length:</label>
+      <input type="number" id="length" min="4" max="50" placeholder="Enter length">
+
+      <div class="checkbox-group">
+        <label><input type="checkbox" id="uppercase"> Include Uppercase</label>
+        <label><input type="checkbox" id="lowercase"> Include Lowercase</label>
+        <label><input type="checkbox" id="numbers"> Include Numbers</label>
+        <label><input type="checkbox" id="symbols"> Include Symbols</label>
+      </div>
+
+      <button onclick="generatePassword()">Generate Password</button>
+      <div id="password-output"></div>
+      <button onclick="copyPassword()">Copy to Clipboard</button>
+      <div class="note">(Copied passwords are not saved)</div>
+    </div>
+  </div>
+
+  <script>
+    function generatePassword() {
+      const length = parseInt(document.getElementById('length').value);
+      const useUpper = document.getElementById('uppercase').checked;
+      const useLower = document.getElementById('lowercase').checked;
+      const useNumbers = document.getElementById('numbers').checked;
+      const useSymbols = document.getElementById('symbols').checked;
+
+      if (!length || length < 4) {
+        alert("Please enter a valid password length (min 4).");
+        return;
+      }
+
+      let characters = '';
+      if (useUpper) characters += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      if (useLower) characters += 'abcdefghijklmnopqrstuvwxyz';
+      if (useNumbers) characters += '0123456789';
+      if (useSymbols) characters += '!@#$%^&*()_+~`|}{[]:;?><,./-=\\';
+
+      if (characters === '') {
+        alert('Please select at least one character type.');
+        return;
+      }
+
+      let password = '';
+      for (let i = 0; i < length; i++) {
+        const index = Math.floor(Math.random() * characters.length);
+        password += characters.charAt(index);
+      }
+
+      document.getElementById('password-output').innerText = password;
+    }
+
+    function copyPassword() {
+      const password = document.getElementById('password-output').innerText;
+      if (!password) {
+        alert("Nothing to copy!");
+        return;
+      }
+      navigator.clipboard.writeText(password).then(() => {
+        alert("Password copied to clipboard!");
+      });
+    }
+  </script>
+
+</body>
+</html>
